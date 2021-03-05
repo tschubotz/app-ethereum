@@ -73,7 +73,9 @@ int eth_plugin_perform_init(uint8_t *contractAddress, ethPluginInitContract_t *i
             if (memcmp(init->selector, PIC(selectors[j]), SELECTOR_SIZE) == 0) {
                 if ((INTERNAL_ETH_PLUGINS[i].availableCheck == NULL) ||
                     ((PluginAvailableCheck) PIC(INTERNAL_ETH_PLUGINS[i].availableCheck))()) {
-                    strcpy(dataContext.tokenContext.pluginName, INTERNAL_ETH_PLUGINS[i].alias);
+                    strlcpy(dataContext.tokenContext.pluginName,
+                            INTERNAL_ETH_PLUGINS[i].alias,
+                            PLUGIN_ID_LENGTH);
                     dataContext.tokenContext.pluginAvailable = 1;
                     contractAddress = NULL;
                     break;
@@ -217,7 +219,7 @@ int eth_plugin_call(uint8_t *contractAddress, int method, void *parameter) {
             switch (((ethPluginInitContract_t *) parameter)->result) {
                 case ETH_PLUGIN_RESULT_OK:
                     if (contractAddress != NULL) {
-                        strcpy(dataContext.tokenContext.pluginName, alias);
+                        strlcpy(dataContext.tokenContext.pluginName, alias, PLUGIN_ID_LENGTH);
                     }
                     break;
                 case ETH_PLUGIN_RESULT_OK_ALIAS:

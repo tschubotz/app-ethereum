@@ -110,9 +110,21 @@ UX_FLOW(ux_settings_flow,
         &ux_settings_flow_3_step);
 
 void display_settings() {
-    strcpy(strings.common.fullAddress, (N_storage.dataAllowed ? "Allowed" : "NOT Allowed"));
-    strcpy(strings.common.fullAddress + 20,
-           (N_storage.contractDetails ? "Displayed" : "NOT Displayed"));
+    if (N_storage.dataAllowed) {
+        strcpy(strings.common.fullAddress, "Allowed");
+    } else {
+        strcpy(strings.common.fullAddress, "NOT Allowed");
+    }
+
+    if (N_storage.contractDetails) {
+        strlcpy(strings.common.fullAddress + 20,
+                "Displayed",
+                sizeof(strings.common.fullAddress) - 20);
+    } else {
+        strlcpy(strings.common.fullAddress + 20,
+                "NOT Displayed",
+                sizeof(strings.common.fullAddress) - 20);
+    }
     ux_flow_init(0, ux_settings_flow, NULL);
 }
 

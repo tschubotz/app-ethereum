@@ -17,25 +17,21 @@ static const uint8_t ERC20_TRANSFER_SELECTOR[SELECTOR_SIZE] = {0xa9, 0x05, 0x9c,
 static const uint8_t ERC20_APPROVE_SELECTOR[SELECTOR_SIZE] = {0x09, 0x5e, 0xa7, 0xb3};
 
 const uint8_t* ERC20_SELECTORS[NUM_ERC20_SELECTORS] = {ERC20_TRANSFER_SELECTOR,
-                                                             ERC20_APPROVE_SELECTOR};
+                                                       ERC20_APPROVE_SELECTOR};
 
 static const uint8_t ERC721_APPROVE_SELECTOR[SELECTOR_SIZE] = {0x09, 0x5e, 0xa7, 0xb3};
 
 const uint8_t* ERC721_SELECTORS[NUM_ERC721_SELECTORS] = {ERC721_APPROVE_SELECTOR};
 
-static const uint8_t COMPOUND_REDEEM_UNDERLYING_SELECTOR[SELECTOR_SIZE] = {0x85,
-                                                                                 0x2a,
-                                                                                 0x12,
-                                                                                 0xe3};
+static const uint8_t COMPOUND_REDEEM_UNDERLYING_SELECTOR[SELECTOR_SIZE] = {0x85, 0x2a, 0x12, 0xe3};
 static const uint8_t COMPOUND_REDEEM_SELECTOR[SELECTOR_SIZE] = {0xdb, 0x00, 0x6a, 0x75};
 static const uint8_t COMPOUND_MINT_SELECTOR[SELECTOR_SIZE] = {0xa0, 0x71, 0x2d, 0x68};
 static const uint8_t CETH_MINT_SELECTOR[SELECTOR_SIZE] = {0x12, 0x49, 0xc5, 0x8b};
 
-const uint8_t* COMPOUND_SELECTORS[NUM_COMPOUND_SELECTORS] = {
-    COMPOUND_REDEEM_UNDERLYING_SELECTOR,
-    COMPOUND_REDEEM_SELECTOR,
-    COMPOUND_MINT_SELECTOR,
-    CETH_MINT_SELECTOR};
+const uint8_t* COMPOUND_SELECTORS[NUM_COMPOUND_SELECTORS] = {COMPOUND_REDEEM_UNDERLYING_SELECTOR,
+                                                             COMPOUND_REDEEM_SELECTOR,
+                                                             COMPOUND_MINT_SELECTOR,
+                                                             CETH_MINT_SELECTOR};
 
 #ifdef HAVE_ETH2
 
@@ -60,31 +56,27 @@ static const uint8_t STARKWARE_VERIFY_ESCAPE_ID[SELECTOR_SIZE] = {0x2d, 0xd5, 0x
 
 static const uint8_t STARKWARE_WITHDRAW_TO_ID[SELECTOR_SIZE] = {0x14, 0xcd, 0x70, 0xe4};
 static const uint8_t STARKWARE_DEPOSIT_NFT_ID[SELECTOR_SIZE] = {0xae, 0x1c, 0xdd, 0xe6};
-static const uint8_t STARKWARE_DEPOSIT_NFT_RECLAIM_ID[SELECTOR_SIZE] = {0xfc,
-                                                                              0xb0,
-                                                                              0x58,
-                                                                              0x22};
+static const uint8_t STARKWARE_DEPOSIT_NFT_RECLAIM_ID[SELECTOR_SIZE] = {0xfc, 0xb0, 0x58, 0x22};
 static const uint8_t STARKWARE_WITHDRAW_AND_MINT_ID[SELECTOR_SIZE] = {0xd9, 0x14, 0x43, 0xb7};
 static const uint8_t STARKWARE_WITHDRAW_NFT_ID[SELECTOR_SIZE] = {0x01, 0x9b, 0x41, 0x7a};
 static const uint8_t STARKWARE_WITHDRAW_NFT_TO_ID[SELECTOR_SIZE] = {0xeb, 0xef, 0x0f, 0xd0};
 
-const uint8_t* STARKWARE_SELECTORS[NUM_STARKWARE_SELECTORS] = {
-    STARKWARE_REGISTER_ID,
-    STARKWARE_DEPOSIT_TOKEN_ID,
-    STARKWARE_DEPOSIT_ETH_ID,
-    STARKWARE_DEPOSIT_CANCEL_ID,
-    STARKWARE_DEPOSIT_RECLAIM_ID,
-    STARKWARE_WITHDRAW_ID,
-    STARKWARE_FULL_WITHDRAWAL_ID,
-    STARKWARE_FREEZE_ID,
-    STARKWARE_ESCAPE_ID,
-    STARKWARE_VERIFY_ESCAPE_ID,
-    STARKWARE_WITHDRAW_TO_ID,
-    STARKWARE_DEPOSIT_NFT_ID,
-    STARKWARE_DEPOSIT_NFT_RECLAIM_ID,
-    STARKWARE_WITHDRAW_AND_MINT_ID,
-    STARKWARE_WITHDRAW_NFT_ID,
-    STARKWARE_WITHDRAW_NFT_TO_ID};
+const uint8_t* STARKWARE_SELECTORS[NUM_STARKWARE_SELECTORS] = {STARKWARE_REGISTER_ID,
+                                                               STARKWARE_DEPOSIT_TOKEN_ID,
+                                                               STARKWARE_DEPOSIT_ETH_ID,
+                                                               STARKWARE_DEPOSIT_CANCEL_ID,
+                                                               STARKWARE_DEPOSIT_RECLAIM_ID,
+                                                               STARKWARE_WITHDRAW_ID,
+                                                               STARKWARE_FULL_WITHDRAWAL_ID,
+                                                               STARKWARE_FREEZE_ID,
+                                                               STARKWARE_ESCAPE_ID,
+                                                               STARKWARE_VERIFY_ESCAPE_ID,
+                                                               STARKWARE_WITHDRAW_TO_ID,
+                                                               STARKWARE_DEPOSIT_NFT_ID,
+                                                               STARKWARE_DEPOSIT_NFT_RECLAIM_ID,
+                                                               STARKWARE_WITHDRAW_AND_MINT_ID,
+                                                               STARKWARE_WITHDRAW_NFT_ID,
+                                                               STARKWARE_WITHDRAW_NFT_TO_ID};
 
 #endif
 

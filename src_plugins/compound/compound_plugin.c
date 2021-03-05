@@ -153,7 +153,7 @@ void compound_plugin_call(int message, void *parameters) {
             compound_parameters_t *context = (compound_parameters_t *) msg->pluginContext;
             PRINTF("compound plugin provide token: %d\n", (msg->token1 != NULL));
             if (msg->token1 != NULL) {
-                strcpy(context->ticker_1, (char *) msg->token1->ticker);
+                strlcpy(context->ticker_1, msg->token1->ticker, MAX_TICKER_LEN);
                 switch (context->selectorIndex) {
                     case COMPOUND_REDEEM_UNDERLYING:
                     case COMPOUND_MINT:
@@ -182,22 +182,22 @@ void compound_plugin_call(int message, void *parameters) {
         case ETH_PLUGIN_QUERY_CONTRACT_ID: {
             ethQueryContractID_t *msg = (ethQueryContractID_t *) parameters;
             compound_parameters_t *context = (compound_parameters_t *) msg->pluginContext;
-            strcpy(msg->name, "Type");
+            strlcpy(msg->name, "Type", msg->nameLength);
             switch (context->selectorIndex) {
                 case COMPOUND_REDEEM_UNDERLYING:
                 case COMPOUND_REDEEM:
-                    strcpy(msg->version, "Redeem");
+                    strlcpy(msg->version, "Redeem", msg->versionLength);
                     break;
 
                 case COMPOUND_MINT:
                 case CETH_MINT:
-                    strcpy(msg->version, "Lend");
+                    strlcpy(msg->version, "Lend", msg->versionLength);
                     break;
 
                 default:
                     break;
             }
-            strcat(msg->version, " Assets");
+            strlcat(msg->version, " Assets", msg->versionLength);
             msg->result = ETH_PLUGIN_RESULT_OK;
         } break;
 
@@ -206,7 +206,7 @@ void compound_plugin_call(int message, void *parameters) {
             compound_parameters_t *context = (compound_parameters_t *) msg->pluginContext;
             switch (msg->screenIndex) {
                 case 0: {
-                    strcpy(msg->title, "Amount");
+                    strlcpy(msg->title, "Amount", msg->titleLength);
                     char *ticker_ptr = context->ticker_1;
                     /* skip "c" in front of cToken unless we use "redeem", as
                     redeem is the only operation dealing with a cToken amount */
@@ -223,9 +223,11 @@ void compound_plugin_call(int message, void *parameters) {
                 } break;
 
                 case 1:
-                    strcpy(msg->title, "Contract");
-                    strcpy(msg->msg, "Compound ");
-                    strcat(msg->msg, context->ticker_1 + 1);  // remove the 'c' char at beginning of compound ticker
+                    strlcpy(msg->title, "Contract", msg->titleLength);
+                    strlcpy(msg->msg, "Compound ", msg->msgLength);
+                    strlcat(msg->msg,
+                            context->ticker_1 + 1,
+                            msg->msgLength);  // remove the 'c' char at beginning of compound ticker
                     msg->result = ETH_PLUGIN_RESULT_OK;
                     break;
                 default:

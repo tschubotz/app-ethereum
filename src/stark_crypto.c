@@ -57,10 +57,11 @@ void stark_get_amount_string(uint8_t *contractAddress,
                              uint8_t *quantum256,
                              uint8_t *amount64,
                              char *tmp100,
-                             char *target100) {
+                             char *target100,
+                             size_t target100Length) {
     uint256_t amountPre, quantum, amount;
     uint8_t decimals;
-    char *ticker = (char *) PIC(chainConfig->coinName);
+    char *ticker = PIC(chainConfig->coinName);
 
     PRINTF("stark_get_amount_string %.*H\n", 20, contractAddress);
 
@@ -73,7 +74,7 @@ void stark_get_amount_string(uint8_t *contractAddress,
             THROW(0x6A80);
         }
         decimals = token->decimals;
-        ticker = (char *) token->ticker;
+        ticker = token->ticker;
         PRINTF("stark_get_amount_string - decimals %d ticker %s\n", decimals, ticker);
     }
     convertUint256BE(amount64, 8, &amountPre);
@@ -81,8 +82,12 @@ void stark_get_amount_string(uint8_t *contractAddress,
     mul256(&amountPre, &quantum, &amount);
     tostring256(&amount, 10, tmp100, 100);
     PRINTF("stark_get_amount_string - mul256 %s\n", tmp100);
-    strcpy(target100, ticker);
-    adjustDecimals(tmp100, strlen(tmp100), target100 + strlen(ticker), 100, decimals);
+    strlcpy(target100, ticker, target100Length);
+    adjustDecimals(tmp100,
+                   strlen(tmp100),
+                   target100 + strlen(ticker),
+                   target100Length - strlen(tmp100),
+                   decimals);
     PRINTF("get_amount_string %s\n", target100);
 }
 

@@ -23,7 +23,8 @@ void stark_get_amount_string(uint8_t *contractAddress,
                              uint8_t *quantum256,
                              uint8_t *amount64,
                              char *tmp100,
-                             char *target100);
+                             char *target100,
+                             size_t target100Length);
 
 int stark_sign(uint8_t *signature, /* out */
                uint8_t *privateKeyData,

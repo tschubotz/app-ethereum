@@ -13,8 +13,8 @@ typedef struct erc20_parameters_t {
     uint8_t selectorIndex;
     uint8_t destinationAddress[21];
     uint8_t amount[32];
-    uint8_t ticker_1[MAX_TICKER_LEN];
-    uint8_t ticker_2[MAX_TICKER_LEN];
+    char ticker_1[MAX_TICKER_LEN];
+    char ticker_2[MAX_TICKER_LEN];
     uint8_t decimals;
     uint8_t target;
 } erc20_parameters_t;
@@ -146,15 +146,15 @@ void erc20_plugin_call(int message, void *parameters) {
                    (msg->token2 != NULL));
             if (msg->token1 != NULL) {
                 context->target = TARGET_ADDRESS;
-                strcpy((char *) context->ticker_1, (char *) msg->token1->ticker);
+                strlcpy(context->ticker_1, msg->token1->ticker, MAX_TICKER_LEN);
                 context->decimals = msg->token1->decimals;
                 if (context->selectorIndex == ERC20_APPROVE) {
                     if (msg->token2 != NULL) {
                         context->target = TARGET_CONTRACT;
-                        strcpy((char *) context->ticker_2, (char *) msg->token2->ticker);
+                        strlcpy(context->ticker_2, msg->token2->ticker, MAX_TICKER_LEN);
                         // test if we're doing a Compound allowance
-                        if (check_token_binding((char *) msg->token1->ticker,
-                                                (char *) msg->token2->ticker,
+                        if (check_token_binding(msg->token1->ticker,
+                                                msg->token2->ticker,
                                                 COMPOUND_BINDINGS,
                                                 NUM_COMPOUND_BINDINGS)) {
                             context->target = TARGET_COMPOUND;
@@ -169,8 +169,8 @@ void erc20_plugin_call(int message, void *parameters) {
 
         case ETH_PLUGIN_QUERY_CONTRACT_ID: {
             ethQueryContractID_t *msg = (ethQueryContractID_t *) parameters;
-            strcpy(msg->name, "Type");
-            strcpy(msg->version, "Approve");
+            strlcpy(msg->name, "Type", msg->nameLength);
+            strlcpy(msg->version, "Approve", msg->versionLength);
             msg->result = ETH_PLUGIN_RESULT_OK;
         } break;
 
@@ -179,10 +179,10 @@ void erc20_plugin_call(int message, void *parameters) {
             erc20_parameters_t *context = (erc20_parameters_t *) msg->pluginContext;
             switch (msg->screenIndex) {
                 case 0:
-                    strcpy(msg->title, "Amount");
+                    strlcpy(msg->title, "Amount", msg->titleLength);
                     if (ismaxint(context->amount, sizeof(context->amount))) {
-                        strcpy(msg->msg, "Unlimited ");
-                        strcat(msg->msg, (char *) context->ticker_1);
+                        strlcpy(msg->msg, "Unlimited ", msg->msgLength);
+                        strlcat(msg->msg, context->ticker_1, msg->msgLength);
                     } else {
                         amountToString(context->amount,
                                        sizeof(context->amount),
@@ -195,17 +195,18 @@ void erc20_plugin_call(int message, void *parameters) {
                     break;
                 case 1:
                     if (context->target >= TARGET_CONTRACT) {
-                        strcpy(msg->title, "Contract");
+                        strlcpy(msg->title, "Contract", msg->titleLength);
                         if (context->target == TARGET_COMPOUND) {
-                            strcpy(msg->msg, "Compound ");
-                            strcat(msg->msg,
-                                   (char *) context->ticker_2 +
-                                       1);  // remove the 'c' char at beginning of compound ticker
+                            strlcpy(msg->msg, "Compound ", msg->msgLength);
+                            strlcat(msg->msg,
+                                    context->ticker_2 + 1,
+                                    msg->msgLength);  // remove the 'c' char at beginning of
+                                                      // compound ticker
                         } else {
-                            strcpy(msg->msg, (char *) context->ticker_2);
+                            strlcpy(msg->msg, context->ticker_2, msg->msgLength);
                         }
                     } else {
-                        strcpy(msg->title, "Address");
+                        strlcpy(msg->title, "Address", msg->titleLength);
                         msg->msg[0] = '0';
                         msg->msg[1] = 'x';
                         getEthAddressStringFromBinary(context->destinationAddress,

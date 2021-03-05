@@ -238,7 +238,10 @@ void starkware_print_eth_address(const uint8_t *address, char *destination) {
 }
 
 // TODO : rewrite as independant code
-void starkware_print_amount(uint8_t *amountData, char *destination, bool forEscape) {
+void starkware_print_amount(uint8_t *amountData,
+                            char *destination,
+                            size_t destinationLength,
+                            bool forEscape) {
     uint256_t amount, amountPre, quantum;
     uint8_t decimals;
     char *ticker = (char *) PIC(chainConfig->coinName);
@@ -265,16 +268,16 @@ void starkware_print_amount(uint8_t *amountData, char *destination, bool forEsca
         mul256(&amountPre, &quantum, &amount);
     }
     tostring256(&amount, 10, (char *) (G_io_apdu_buffer + 100), 100);
-    strcpy(destination, ticker);
+    strlcpy(destination, ticker, destinationLength);
     adjustDecimals((char *) (G_io_apdu_buffer + 100),
                    strlen((char *) (G_io_apdu_buffer + 100)),
                    destination + strlen(ticker),
-                   50 - strlen(ticker),
+                   destinationLength - strlen(ticker),
                    decimals);
 }
 
 // TODO : rewrite as independant code
-void starkware_print_ticker(char *destination) {
+static void starkware_print_ticker(char *destination, size_t destinationLength) {
     char *ticker = (char *) PIC(chainConfig->coinName);
 
     if (dataContext.tokenContext.quantumIndex != MAX_TOKEN) {
@@ -282,18 +285,18 @@ void starkware_print_ticker(char *destination) {
             &tmpCtx.transactionContext.tokens[dataContext.tokenContext.quantumIndex];
         ticker = (char *) token->ticker;
     }
-    strcpy(destination, ticker);
+    strlcpy(destination, ticker, destinationLength);
 }
 
 // TODO : rewrite as independant code
-void starkware_print_asset_contract(char *destination) {
+static void starkware_print_asset_contract(char *destination, size_t destinationLength) {
     // token has been validated to be present previously
     if (dataContext.tokenContext.quantumIndex != MAX_TOKEN) {
         tokenDefinition_t *token =
             &tmpCtx.transactionContext.tokens[dataContext.tokenContext.quantumIndex];
         starkware_print_eth_address(token->address, destination);
     } else {
-        strcpy(destination, "UNKNOWN");
+        strlcpy(destination, "UNKNOWN", destinationLength);
     }
 }
 
@@ -515,48 +518,49 @@ void starkware_plugin_call(int message, void *parameters) {
             PRINTF("starkware query contract id\n");
             switch (context->selectorIndex) {
                 case STARKWARE_REGISTER:
-                    strcpy(msg->name, "Register");
+                    strlcpy(msg->name, "Register", msg->nameLength);
                     break;
                 case STARKWARE_DEPOSIT_TOKEN:
                 case STARKWARE_DEPOSIT_ETH:
                 case STARKWARE_DEPOSIT_NFT:
-                    strcpy(msg->name, "Deposit");
+                    strlcpy(msg->name, "Deposit", msg->nameLength);
                     break;
                 case STARKWARE_DEPOSIT_CANCEL:
-                    strcpy(msg->name, "Cancel Deposit");
+                    strlcpy(msg->name, "Cancel Deposit", msg->nameLength);
                     break;
                 case STARKWARE_DEPOSIT_RECLAIM:
                 case STARKWARE_DEPOSIT_NFT_RECLAIM:
-                    strcpy(msg->name, "Reclaim Deposit");
+                    strlcpy(msg->name, "Reclaim Deposit", msg->nameLength);
                     break;
                 case STARKWARE_WITHDRAW:
                 case STARKWARE_WITHDRAW_NFT:
                 case STARKWARE_WITHDRAW_AND_MINT:
-                    strcpy(msg->name, "Withdrawal");
+                    strlcpy(msg->name, "Withdrawal", msg->nameLength);
                     break;
                 case STARKWARE_FULL_WITHDRAW:
-                    strcpy(msg->name, "Full Withdrawal");
+                    strlcpy(msg->name, "Full Withdrawal", msg->nameLength);
                     break;
                 case STARKWARE_FREEZE:
-                    strcpy(msg->name, "Freeze");
+                    strlcpy(msg->name, "Freeze", msg->nameLength);
                     break;
                 case STARKWARE_ESCAPE:
-                    strcpy(msg->name, "Escape");
+                    strlcpy(msg->name, "Escape", msg->nameLength);
                     break;
                 case STARKWARE_VERIFY_ESCAPE:
-                    strcpy(msg->name, "Verify Escape");
+                    strlcpy(msg->name, "Verify Escape", msg->nameLength);
                     break;
                 case STARKWARE_WITHDRAW_TO:
                 case STARKWARE_WITHDRAW_NFT_TO:
-                    strcpy(msg->name, "Withdrawal To");
+                    strlcpy(msg->name, "Withdrawal To", msg->nameLength);
                     break;
 
                 default:
                     break;
             }
-            strcpy(msg->version,
-                   is_deversify_contract(tmpContent.txContent.destination) ? "DeversiFi"
-                                                                           : "Starkware");
+            strlcpy(
+                msg->version,
+                is_deversify_contract(tmpContent.txContent.destination) ? "DeversiFi" : "Starkware",
+                msg->versionLength);
             msg->result = ETH_PLUGIN_RESULT_OK;
         } break;
 
@@ -565,9 +569,9 @@ void starkware_plugin_call(int message, void *parameters) {
             starkware_parameters_t *context = (starkware_parameters_t *) msg->pluginContext;
             switch (msg->screenIndex) {
                 case 0:
-                    strcpy(msg->title, "Contract Name");
+                    strlcpy(msg->title, "Contract Name", msg->titleLength);
                     if (is_deversify_contract(tmpContent.txContent.destination)) {
-                        strcpy(msg->msg, "DeversiFi");
+                        strlcpy(msg->msg, "DeversiFi", msg->msgLength);
                     } else {
                         starkware_print_eth_address(tmpContent.txContent.destination, msg->msg);
                     }
@@ -576,12 +580,12 @@ void starkware_plugin_call(int message, void *parameters) {
                 case 1:
                     switch (context->selectorIndex) {
                         case STARKWARE_REGISTER:
-                            strcpy(msg->title, "From ETH Address");
+                            strlcpy(msg->title, "From ETH Address", msg->titleLength);
                             starkware_print_eth_address(context->amount, msg->msg);
                             break;
                         case STARKWARE_ESCAPE:
-                            strcpy(msg->title, "Amount");
-                            starkware_print_amount(context->amount, msg->msg, true);
+                            strlcpy(msg->title, "Amount", msg->titleLength);
+                            starkware_print_amount(context->amount, msg->msg, msg->msgLength, true);
                             break;
                         case STARKWARE_DEPOSIT_TOKEN:
                         case STARKWARE_DEPOSIT_ETH:
@@ -597,7 +601,7 @@ void starkware_plugin_call(int message, void *parameters) {
                         case STARKWARE_WITHDRAW_AND_MINT:
                         case STARKWARE_WITHDRAW_NFT:
                         case STARKWARE_WITHDRAW_NFT_TO:
-                            strcpy(msg->title, "Master Account");
+                            strlcpy(msg->title, "Master Account", msg->titleLength);
                             starkware_print_stark_key(context->starkKey, msg->msg);
                             break;
                         default:
@@ -612,7 +616,7 @@ void starkware_plugin_call(int message, void *parameters) {
                     switch (context->selectorIndex) {
                         case STARKWARE_REGISTER:
                         case STARKWARE_ESCAPE:
-                            strcpy(msg->title, "Master Account");
+                            strlcpy(msg->title, "Master Account", msg->titleLength);
                             starkware_print_stark_key(context->starkKey, msg->msg);
                             break;
 
@@ -624,22 +628,22 @@ void starkware_plugin_call(int message, void *parameters) {
                         case STARKWARE_FREEZE:
                         case STARKWARE_DEPOSIT_NFT:
                         case STARKWARE_DEPOSIT_NFT_RECLAIM:
-                            strcpy(msg->title, "Token Account");
+                            strlcpy(msg->title, "Token Account", msg->titleLength);
                             starkware_print_vault_id(U4BE(context->vaultId, 0), msg->msg);
                             break;
                         case STARKWARE_WITHDRAW:
                         case STARKWARE_WITHDRAW_NFT:
-                            strcpy(msg->title, "To ETH Address");
+                            strlcpy(msg->title, "To ETH Address", msg->titleLength);
                             starkware_get_source_address(msg->msg);
                             break;
                         case STARKWARE_WITHDRAW_TO:
                         case STARKWARE_WITHDRAW_NFT_TO:
-                            strcpy(msg->title, "To ETH Address");
+                            strlcpy(msg->title, "To ETH Address", msg->titleLength);
                             starkware_print_eth_address(context->amount, msg->msg);
                             break;
                         case STARKWARE_WITHDRAW_AND_MINT:
-                            strcpy(msg->title, "Asset Contract");
-                            starkware_print_asset_contract(msg->msg);
+                            strlcpy(msg->title, "Asset Contract", msg->titleLength);
+                            starkware_print_asset_contract(msg->msg, msg->msgLength);
                             break;
 
                         default:
@@ -654,30 +658,31 @@ void starkware_plugin_call(int message, void *parameters) {
                 case 3:
                     switch (context->selectorIndex) {
                         case STARKWARE_ESCAPE:
-                            strcpy(msg->title, "Token Account");
+                            strlcpy(msg->title, "Token Account", msg->titleLength);
                             starkware_print_vault_id(U4BE(context->vaultId, 0), msg->msg);
                             break;
                         case STARKWARE_DEPOSIT_TOKEN:
                         case STARKWARE_DEPOSIT_ETH:
-                            strcpy(msg->title, "Amount");
+                            strlcpy(msg->title, "Amount", msg->titleLength);
                             starkware_print_amount(
                                 (context->selectorIndex == STARKWARE_DEPOSIT_ETH ? NULL
                                                                                  : context->amount),
                                 msg->msg,
+                                msg->msgLength,
                                 false);
                             break;
                         case STARKWARE_WITHDRAW:
                         case STARKWARE_WITHDRAW_TO:
-                            strcpy(msg->title, "Token Symbol");
-                            starkware_print_ticker(msg->msg);
+                            strlcpy(msg->title, "Token Symbol", msg->titleLength);
+                            starkware_print_ticker(msg->msg, msg->msgLength);
                             break;
 
                         case STARKWARE_WITHDRAW_NFT:
                         case STARKWARE_WITHDRAW_NFT_TO:
                         case STARKWARE_DEPOSIT_NFT:
                         case STARKWARE_DEPOSIT_NFT_RECLAIM:
-                            strcpy(msg->title, "NFT Contract");
-                            starkware_print_asset_contract(msg->msg);
+                            strlcpy(msg->title, "NFT Contract", msg->titleLength);
+                            starkware_print_asset_contract(msg->msg, msg->msgLength);
                             break;
 
                         default:
@@ -695,7 +700,7 @@ void starkware_plugin_call(int message, void *parameters) {
                         case STARKWARE_WITHDRAW_NFT_TO:
                         case STARKWARE_DEPOSIT_NFT:
                         case STARKWARE_DEPOSIT_NFT_RECLAIM:
-                            strcpy(msg->title, "TokenID");
+                            strlcpy(msg->title, "TokenID", msg->titleLength);
                             starkware_print_stark_key(dataContext.tokenContext.quantum, msg->msg);
                             break;
 

@@ -160,7 +160,10 @@ void to_uppercase(char *str, unsigned char size) {
     }
 }
 
-void compareOrCopy(char *preapproved_string, char *parsed_string, bool silent_mode) {
+static void compareOrCopy(char *preapproved_string,
+                          size_t preapproved_string_length,
+                          char *parsed_string,
+                          bool silent_mode) {
     if (silent_mode) {
         /* ETH address are not fundamentally case sensitive but might
         have some for checksum purpose, so let's get rid of these diffs */
@@ -170,7 +173,7 @@ void compareOrCopy(char *preapproved_string, char *parsed_string, bool silent_mo
             THROW(ERR_SILENT_MODE_CHECK_FAILED);
         }
     } else {
-        strcpy(preapproved_string, parsed_string);
+        strlcpy(preapproved_string, parsed_string, preapproved_string_length);
     }
 }
 
@@ -231,7 +234,7 @@ void computeFees(char *displayBuffer, uint32_t displayBufferSize) {
 void finalizeParsing(bool direct) {
     char displayBuffer[50];
     uint8_t decimals = WEI_TO_ETHER;
-    uint8_t *ticker = (uint8_t *) PIC(chainConfig->coinName);
+    char *ticker = (char *) PIC(chainConfig->coinName);
     ethPluginFinalize_t pluginFinalize;
     tokenDefinition_t *token1 = NULL, *token2 = NULL;
     bool genericUI = true;
@@ -338,7 +341,10 @@ void finalizeParsing(bool direct) {
                                           displayBuffer + 2,
                                           &global_sha3,
                                           chainConfig);
-            compareOrCopy(strings.common.fullAddress, displayBuffer, called_from_swap);
+            compareOrCopy(strings.common.fullAddress,
+                          sizeof(strings.common.fullAddress),
+                          displayBuffer,
+                          called_from_swap);
         } else {
             strcpy(strings.common.fullAddress, "Contract");
         }
@@ -348,15 +354,21 @@ void finalizeParsing(bool direct) {
         amountToString(tmpContent.txContent.value.value,
                        tmpContent.txContent.value.length,
                        decimals,
-                       (char *) ticker,
+                       ticker,
                        displayBuffer,
                        sizeof(displayBuffer));
-        compareOrCopy(strings.common.fullAmount, displayBuffer, called_from_swap);
+        compareOrCopy(strings.common.fullAmount,
+                      sizeof(strings.common.fullAmount),
+                      displayBuffer,
+                      called_from_swap);
     }
     // Compute maximum fee
     if (genericUI) {
         computeFees(displayBuffer, sizeof(displayBuffer));
-        compareOrCopy(strings.common.maxFee, displayBuffer, called_from_swap);
+        compareOrCopy(strings.common.maxFee,
+                      sizeof(strings.common.maxFee),
+                      displayBuffer,
+                      called_from_swap);
     }
 
     bool no_consent = false;

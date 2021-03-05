@@ -188,7 +188,8 @@ void handleStarkwareSignMessage(uint8_t p1,
                                 dataBuffer + preOffset + 20,
                                 dataBuffer + 20 + 32 + postOffset + 20 + 32 + postOffset + 4 + 4,
                                 (char *) (dataBuffer + TMP_OFFSET),
-                                strings.common.fullAmount);
+                                strings.common.fullAmount,
+                                sizeof(strings.common.fullAmount));
         io_seproxyhal_io_heartbeat();
         // amount to buy
         stark_get_amount_string(
@@ -196,7 +197,8 @@ void handleStarkwareSignMessage(uint8_t p1,
             dataBuffer + 20 + 32 + postOffset + preOffset + 20,
             dataBuffer + 20 + 32 + postOffset + 20 + 32 + postOffset + 4 + 4 + 8,
             (char *) (dataBuffer + TMP_OFFSET),
-            strings.common.maxFee);
+            strings.common.maxFee,
+            sizeof(strings.common.maxFee));
         // src vault ID
         snprintf(strings.common.fullAddress,
                  sizeof(strings.common.fullAddress),
@@ -221,7 +223,8 @@ void handleStarkwareSignMessage(uint8_t p1,
                                 dataBuffer + preOffset + 20,
                                 dataBuffer + 20 + 32 + postOffset + 32 + 4 + 4,
                                 (char *) (dataBuffer + TMP_OFFSET),
-                                tmpContent.tmp);
+                                tmpContent.tmp,
+                                sizeof(tmpContent.tmp));
         // dest vault ID
         snprintf(strings.tmp.tmp2,
                  sizeof(strings.tmp.tmp2),

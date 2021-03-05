@@ -27,7 +27,7 @@ typedef struct tokenDefinition_t {
     uint8_t contractName[20];
 #endif
     uint8_t address[20];
-    uint8_t ticker[MAX_TICKER_LEN];
+    char ticker[MAX_TICKER_LEN];
     uint8_t decimals;
 } tokenDefinition_t;
 

@@ -1,5 +1,4 @@
 #include "handle_swap_sign_transaction.h"
-#include "usbd_core.h"
 #include "ux.h"
 #include "shared_context.h"
 #include "utils.h"
@@ -10,7 +9,7 @@ bool copy_transaction_parameters(create_transaction_parameters_t* sign_transacti
     // We need this "trick" as the input data position can overlap with app-ethereum globals
     txStringProperties_t stack_data;
     memset(&stack_data, 0, sizeof(stack_data));
-    strncpy(stack_data.fullAddress,
+    strlcpy(stack_data.fullAddress,
             sign_transaction_params->destination_address,
             sizeof(stack_data.fullAddress));
     if ((stack_data.fullAddress[sizeof(stack_data.fullAddress) - 1] != '\0') ||
@@ -36,7 +35,7 @@ bool copy_transaction_parameters(create_transaction_parameters_t* sign_transacti
                    sizeof(stack_data.fullAmount));
 
     // If the amount is a fee, its value is nominated in ETH even if we're doing an ERC20 swap
-    strcpy(ticker, config->coinName);
+    strlcpy(ticker, config->coinName, MAX_TICKER_LEN);
     decimals = WEI_TO_ETHER;
     amountToString(sign_transaction_params->fee_amount,
                    sign_transaction_params->fee_amount_length,
