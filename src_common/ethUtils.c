@@ -58,7 +58,6 @@ bool rlpCanDecode(uint8_t *buffer, uint32_t bufferLength, bool *valid) {
 }
 
 bool rlpDecodeLength(uint8_t *buffer,
-                     uint32_t bufferLength,
                      uint32_t *fieldLength,
                      uint32_t *offset,
                      bool *list) {
@@ -178,10 +177,10 @@ void getEthAddressStringFromBinary(uint8_t *address,
 
 #else
 
-static const uint8_t const HEXDIGITS[] = "0123456789abcdef";
+static const uint8_t HEXDIGITS[] = "0123456789abcdef";
 
-void getEthAddressStringFromKey(cx_ecfp_public_key_t *publicKey,
-                                uint8_t *out,
+void getEthAddressStringFromKey(const cx_ecfp_public_key_t *publicKey,
+                                char *out,
                                 cx_sha3_t *sha3Context,
                                 chain_config_t *chain_config) {
     uint8_t hashAddress[32];
@@ -190,8 +189,8 @@ void getEthAddressStringFromKey(cx_ecfp_public_key_t *publicKey,
     getEthAddressStringFromBinary(hashAddress + 12, out, sha3Context, chain_config);
 }
 
-void getEthAddressStringFromBinary(uint8_t *address,
-                                   uint8_t *out,
+void getEthAddressStringFromBinary(const uint8_t *address,
+                                   char *out,
                                    cx_sha3_t *sha3Context,
                                    chain_config_t *chain_config) {
     // save some precious stack space

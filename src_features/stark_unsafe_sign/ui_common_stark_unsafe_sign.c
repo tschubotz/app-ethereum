@@ -5,6 +5,8 @@
 #include "ui_callbacks.h"
 
 unsigned int io_seproxyhal_touch_stark_unsafe_sign_ok(const bagl_element_t *e) {
+    (void) e;
+
     cx_ecfp_private_key_t privateKey;
     uint8_t privateKeyData[32];
     uint8_t signature[72];

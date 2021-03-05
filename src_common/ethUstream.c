@@ -16,6 +16,7 @@
  ********************************************************************************/
 
 #include <stdint.h>
+#include <string.h>
 
 #include "ethUstream.h"
 #include "ethUtils.h"
@@ -289,7 +290,6 @@ static parserStatus_e processTxInternal(txContext_t *context) {
             }
             // Ready to process this field
             if (!rlpDecodeLength(context->rlpBuffer,
-                                 context->rlpBufferPos,
                                  &context->currentFieldLength,
                                  &offset,
                                  &context->currentFieldIsList)) {

@@ -2,7 +2,7 @@
 #include "apdu_constants.h"
 #include "ui_flow.h"
 
-static const uint8_t const TOKEN_SIGNATURE_PUBLIC_KEY[] = {
+static const uint8_t TOKEN_SIGNATURE_PUBLIC_KEY[] = {
     // production key 2019-01-11 03:07PM (erc20signer)
     0x04,
 
@@ -115,6 +115,8 @@ void handleProvideErc20TokenInformation(uint8_t p1,
     UNUSED(p1);
     UNUSED(p2);
     UNUSED(flags);
+    UNUSED(tx);
+
     uint32_t offset = 0;
     uint8_t tickerLength;
     uint32_t chainId;

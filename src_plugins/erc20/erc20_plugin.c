@@ -25,7 +25,7 @@ typedef struct ticker_binding_t {
 } ticker_binding_t;
 
 #define NUM_COMPOUND_BINDINGS 9
-const ticker_binding_t const COMPOUND_BINDINGS[NUM_COMPOUND_BINDINGS] = {
+static const ticker_binding_t COMPOUND_BINDINGS[NUM_COMPOUND_BINDINGS] = {
     {"DAI", "CDAI"},
     {"WETH", "CETH"},
     {"USDC", "CUSDC"},
@@ -209,7 +209,7 @@ void erc20_plugin_call(int message, void *parameters) {
                         msg->msg[0] = '0';
                         msg->msg[1] = 'x';
                         getEthAddressStringFromBinary(context->destinationAddress,
-                                                      (uint8_t *) msg->msg + 2,
+                                                      msg->msg + 2,
                                                       msg->pluginSharedRW->sha3,
                                                       chainConfig);
                     }

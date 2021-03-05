@@ -12,6 +12,10 @@ typedef enum {
 
 } plugin_ui_state_t;
 
+#ifdef TARGET_NANOS
+void ux_layout_paging_redisplay_by_addr(unsigned int stack_slot);
+#endif
+
 void computeFees(char *displayBuffer, uint32_t displayBufferSize);
 
 void plugin_ui_get_id() {

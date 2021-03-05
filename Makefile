@@ -290,7 +290,7 @@ endif
 CC       := $(CLANGPATH)clang
 
 #CFLAGS   += -O0
-CFLAGS   += -O3 -Os -I/usr/include
+CFLAGS   += -O3 -Os -Werror -Wno-format
 
 AS     := $(GCCPATH)arm-none-eabi-gcc
 

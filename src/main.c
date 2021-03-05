@@ -90,6 +90,7 @@ void ui_idle(void) {
 }
 
 unsigned int io_seproxyhal_touch_exit(const bagl_element_t *e) {
+    (void) e;
     // Go back to the dashboard
     os_sched_exit(0);
     return 0;  // do not redraw the widget
@@ -97,6 +98,8 @@ unsigned int io_seproxyhal_touch_exit(const bagl_element_t *e) {
 
 #if defined(TARGET_NANOS)
 unsigned int ui_address_nanos_button(unsigned int button_mask, unsigned int button_mask_counter) {
+    (void) button_mask_counter;
+
     switch (button_mask) {
         case BUTTON_EVT_RELEASED | BUTTON_LEFT:  // CANCEL
             io_seproxyhal_touch_address_cancel(NULL);
@@ -623,6 +626,8 @@ void io_seproxyhal_display(const bagl_element_t *element) {
 }
 
 unsigned char io_event(unsigned char channel) {
+    (void) channel;
+
     // nothing done with the event, throw an error on the transport layer if
     // needed
 

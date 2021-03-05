@@ -2,6 +2,8 @@
 #include "eth_plugin_interface.h"
 #include "shared_context.h"       // TODO : rewrite as independant code
 #include "eth_plugin_internal.h"  // TODO : rewrite as independant code
+#include "stark_utils.h"
+#include "utils.h"
 
 #ifdef HAVE_STARKWARE
 
@@ -159,7 +161,7 @@ bool is_deversify_contract(const uint8_t *address) {
     uint8_t size = DEVERSIFI_CONTRACT[0];
     uint8_t i;
 
-    for (i = 0; i < DEVERSIFI_CONTRACT[0]; i++) {
+    for (i = 0; i < size; i++) {
         if (memcmp(address, DEVERSIFI_CONTRACT + offset + 1, 20) == 0) {
             return true;
         }
@@ -228,7 +230,7 @@ void starkware_print_stark_key(uint8_t *starkKey, char *destination) {
 }
 
 // TODO : rewrite as independant code
-void starkware_print_eth_address(uint8_t *address, char *destination) {
+void starkware_print_eth_address(const uint8_t *address, char *destination) {
     destination[0] = '0';
     destination[1] = 'x';
     getEthAddressStringFromBinary(address, destination + 2, &global_sha3, chainConfig);

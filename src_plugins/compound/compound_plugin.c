@@ -30,7 +30,7 @@ static const uint8_t COMPOUND_EXPECTED_DATA_SIZE[] = {
 typedef struct compound_parameters_t {
     uint8_t selectorIndex;
     uint8_t amount[32];
-    uint8_t ticker_1[MAX_TICKER_LEN];
+    char ticker_1[MAX_TICKER_LEN];
     uint8_t decimals;
 } compound_parameters_t;
 
@@ -43,7 +43,7 @@ typedef struct underlying_asset_decimals_t {
 the cToken decimals. Therefore, we hardcode a binding table. If Compound adds a lot of token in the
 future, we will have to move to a CAL based architecture instead, as this one doesn't scale well.*/
 #define NUM_COMPOUND_BINDINGS 9
-const underlying_asset_decimals_t const UNDERLYING_ASSET_DECIMALS[NUM_COMPOUND_BINDINGS] = {
+static const underlying_asset_decimals_t UNDERLYING_ASSET_DECIMALS[NUM_COMPOUND_BINDINGS] = {
     {"cDAI", 18},
     {"CETH", 18},
     {"CUSDC", 6},
@@ -153,7 +153,7 @@ void compound_plugin_call(int message, void *parameters) {
             compound_parameters_t *context = (compound_parameters_t *) msg->pluginContext;
             PRINTF("compound plugin provide token: %d\n", (msg->token1 != NULL));
             if (msg->token1 != NULL) {
-                strcpy((char *) context->ticker_1, (char *) msg->token1->ticker);
+                strcpy(context->ticker_1, (char *) msg->token1->ticker);
                 switch (context->selectorIndex) {
                     case COMPOUND_REDEEM_UNDERLYING:
                     case COMPOUND_MINT:
@@ -207,7 +207,7 @@ void compound_plugin_call(int message, void *parameters) {
             switch (msg->screenIndex) {
                 case 0: {
                     strcpy(msg->title, "Amount");
-                    char *ticker_ptr = (char *) context->ticker_1;
+                    char *ticker_ptr = context->ticker_1;
                     /* skip "c" in front of cToken unless we use "redeem", as
                     redeem is the only operation dealing with a cToken amount */
                     if (context->selectorIndex != COMPOUND_REDEEM) {
@@ -225,9 +225,7 @@ void compound_plugin_call(int message, void *parameters) {
                 case 1:
                     strcpy(msg->title, "Contract");
                     strcpy(msg->msg, "Compound ");
-                    strcat(msg->msg,
-                           (char *) context->ticker_1 +
-                               1);  // remove the 'c' char at beginning of compound ticker
+                    strcat(msg->msg, context->ticker_1 + 1);  // remove the 'c' char at beginning of compound ticker
                     msg->result = ETH_PLUGIN_RESULT_OK;
                     break;
                 default:

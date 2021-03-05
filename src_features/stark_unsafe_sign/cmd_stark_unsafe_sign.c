@@ -12,6 +12,8 @@ void handleStarkwareUnsafeSign(uint8_t p1,
                                uint16_t dataLength,
                                unsigned int *flags,
                                unsigned int *tx) {
+    (void) tx;
+
     uint32_t i;
     uint8_t privateKeyData[32];
     cx_ecfp_public_key_t publicKey;

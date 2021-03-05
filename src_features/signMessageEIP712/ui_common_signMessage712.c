@@ -1,9 +1,11 @@
 #include "shared_context.h"
 #include "ui_callbacks.h"
 
-static const uint8_t const EIP_712_MAGIC[] = {0x19, 0x01};
+static const uint8_t EIP_712_MAGIC[] = {0x19, 0x01};
 
 unsigned int io_seproxyhal_touch_signMessage712_v0_ok(const bagl_element_t *e) {
+    (void) e;
+
     uint8_t privateKeyData[32];
     uint8_t hash[32];
     uint8_t signature[100];
@@ -71,6 +73,8 @@ unsigned int io_seproxyhal_touch_signMessage712_v0_ok(const bagl_element_t *e) {
 }
 
 unsigned int io_seproxyhal_touch_signMessage712_v0_cancel(const bagl_element_t *e) {
+    (void) e;
+
     reset_app_context();
     G_io_apdu_buffer[0] = 0x69;
     G_io_apdu_buffer[1] = 0x85;

@@ -10,6 +10,10 @@ void handleStarkwareProvideQuantum(uint8_t p1,
                                    uint16_t dataLength,
                                    unsigned int *flags,
                                    unsigned int *tx) {
+    (void) p2;
+    (void) flags;
+    (void) tx;
+
     size_t i = 0;
     uint8_t expectedDataSize = 20 + 32;
     uint8_t addressZero = 0;

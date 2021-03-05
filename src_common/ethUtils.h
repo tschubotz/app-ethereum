@@ -35,7 +35,6 @@
  * @return true if the RLP header is consistent
  */
 bool rlpDecodeLength(uint8_t *buffer,
-                     uint32_t bufferLength,
                      uint32_t *fieldLength,
                      uint32_t *offset,
                      bool *list);
@@ -44,13 +43,13 @@ bool rlpCanDecode(uint8_t *buffer, uint32_t bufferLength, bool *valid);
 
 void getEthAddressFromKey(cx_ecfp_public_key_t *publicKey, uint8_t *out, cx_sha3_t *sha3Context);
 
-void getEthAddressStringFromKey(cx_ecfp_public_key_t *publicKey,
-                                uint8_t *out,
+void getEthAddressStringFromKey(const cx_ecfp_public_key_t *publicKey,
+                                char *out,
                                 cx_sha3_t *sha3Context,
                                 chain_config_t *chain_config);
 
-void getEthAddressStringFromBinary(uint8_t *address,
-                                   uint8_t *out,
+void getEthAddressStringFromBinary(const uint8_t *address,
+                                   char *out,
                                    cx_sha3_t *sha3Context,
                                    chain_config_t *chain_config);
 
