@@ -42,7 +42,7 @@ void starkDerivePrivateKey(uint32_t *bip32Path, uint32_t bip32PathLength, uint8_
         tmp[32] = index;
         cx_hash_sha256(tmp, 33, privateKeyData, 32);
         PRINTF("Key hash %.*H\n", 32, privateKeyData);
-        if (cx_math_cmp(privateKeyData, STARK_DERIVE_BIAS, 32) < 0) {
+        if (cx_math_cmp(privateKeyData, (uint8_t *)STARK_DERIVE_BIAS, 32) < 0) {
             cx_math_modm(privateKeyData, 32, C_cx_Stark256_n, 32);
             break;
         }
